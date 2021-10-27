@@ -1,4 +1,4 @@
-import { StatusBar } from 'expo-status-bar';
+/* import { StatusBar } from 'expo-status-bar'; */
 import React from 'react';
 import {
     StyleSheet,
@@ -8,6 +8,7 @@ import {
     Button,
     TouchableHighlight,
     TouchableOpacity,
+    StatusBar,
 } from 'react-native';
 
 export default function App() {
@@ -67,6 +68,7 @@ export default function App() {
                     </TouchableOpacity>
                 </View>
             </View>
+            <StatusBar barStyle="light-content" />
         </View>
     );
 }
