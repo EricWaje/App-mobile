@@ -1,17 +1,50 @@
 /* import { StatusBar } from 'expo-status-bar'; */
-import React from 'react';
+import React, { useState } from 'react';
 import {
     StyleSheet,
     Text,
     TextInput,
     View,
     Button,
-    TouchableHighlight,
     TouchableOpacity,
     StatusBar,
+    FlatList,
+    Modal,
 } from 'react-native';
 
 export default function App() {
+    const [text, setText] = useState('');
+    const [itemList, setItemList] = useState([]);
+    const [itemSelected, setItemSelected] = useState({});
+    const [modalVisible, setModalVisible] = useState(false);
+
+    const handleChange = (value) => {
+        setText(value);
+    };
+
+    const handleAddItem = () => {
+        const item = {
+            value: text,
+            id: Math.random().toString(),
+        };
+        setItemList([...itemList, item]);
+        setText('');
+    };
+
+    const handleRemoveItem = (id) => {
+        setModalVisible(true);
+        setItemSelected(itemList.find((item) => item.id === id));
+    };
+
+    const handleRemoveConfirm = () => {
+        const filterlist = itemList.filter(
+            (item) => item.id !== itemSelected.id
+        );
+        setItemList(filterlist);
+        setModalVisible(false);
+        setItemSelected({});
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.inputContainer}>
@@ -19,55 +52,53 @@ export default function App() {
                     style={styles.input}
                     placeholder="Item"
                     placeholderTextColor="#f7f7f7bb"
+                    value={text}
+                    onChangeText={handleChange}
                 />
-                <TouchableOpacity>
+                <TouchableOpacity onPress={handleAddItem}>
                     <View style={styles.button}>
                         <Text style={styles.textButton}>ADD</Text>
                     </View>
                 </TouchableOpacity>
             </View>
             <View style={styles.listContainer}>
-                <View style={styles.item}>
-                    <Text style={styles.itemText}>PC</Text>
-                    <TouchableOpacity>
-                        <View style={styles.buttonItem}>
-                            <Text style={styles.cancelButton}>REMOVE</Text>
+                <FlatList
+                    data={itemList}
+                    keyExtractor={(item) => item.id}
+                    renderItem={({ item }) => (
+                        <View style={styles.item} key={item.id}>
+                            <Text style={styles.itemText}>{item.value}</Text>
+                            <TouchableOpacity
+                                onPress={() => handleRemoveItem(item.id)}
+                            >
+                                <View style={styles.buttonItem}>
+                                    <Text style={styles.cancelButton}>
+                                        REMOVE
+                                    </Text>
+                                </View>
+                            </TouchableOpacity>
                         </View>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.item}>
-                    <Text style={styles.itemText}>MONITOR</Text>
-                    <TouchableOpacity>
-                        <View style={styles.buttonItem}>
-                            <Text style={styles.cancelButton}>REMOVE</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.item}>
-                    <Text style={styles.itemText}>NOTEBOOK</Text>
-                    <TouchableOpacity>
-                        <View style={styles.buttonItem}>
-                            <Text style={styles.cancelButton}>REMOVE</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.item}>
-                    <Text style={styles.itemText}>TECLADO</Text>
-                    <TouchableOpacity>
-                        <View style={styles.buttonItem}>
-                            <Text style={styles.cancelButton}>REMOVE</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.item}>
-                    <Text style={styles.itemText}>MOUSE</Text>
-                    <TouchableOpacity>
-                        <View style={styles.buttonItem}>
-                            <Text style={styles.cancelButton}>REMOVE</Text>
-                        </View>
-                    </TouchableOpacity>
-                </View>
+                    )}
+                />
             </View>
+            <Modal visible={modalVisible} animationType="slide">
+                <View style={styles.modal}>
+                    <View>
+                        <Text style={styles.modalText}>
+                            Estas seguro que desea eliminar el siguiente
+                            elemento?
+                        </Text>
+                    </View>
+                    <View>
+                        <Text style={styles.modalItem}>
+                            {itemSelected.value}
+                        </Text>
+                    </View>
+                    <View>
+                        <Button onPress={handleRemoveConfirm} title="Confirm" />
+                    </View>
+                </View>
+            </Modal>
             <StatusBar barStyle="light-content" />
         </View>
     );
@@ -75,7 +106,7 @@ export default function App() {
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: 30,
+        paddingTop: 60,
         flex: 1,
         backgroundColor: '#181818',
     },
@@ -145,5 +176,24 @@ const styles = StyleSheet.create({
     itemText: {
         color: 'white',
         fontSize: 23,
+    },
+    modal: {
+        flex: 1,
+        backgroundColor: 'black',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalText: {
+        fontSize: 25,
+        textAlign: 'center',
+        color: 'white',
+        padding: 10,
+    },
+    modalItem: {
+        color: '#e8685f',
+        fontSize: 35,
+        marginTop: 20,
+        marginBottom: 20,
     },
 });
