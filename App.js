@@ -45,9 +45,7 @@ export default function App() {
                 handleChange={handleChange}
                 handleAddItem={handleAddItem}
             />
-            <View style={styles.listContainer}>
-                <List itemList={itemList} handleRemoveItem={handleRemoveItem} />
-            </View>
+            <List itemList={itemList} handleRemoveItem={handleRemoveItem} />
             <ModalComponent
                 modalVisible={modalVisible}
                 itemSelected={itemSelected}
